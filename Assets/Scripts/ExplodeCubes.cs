@@ -2,13 +2,12 @@
 
 public class ExplodeCubes : MonoBehaviour
 {
-
+    public GameObject restartButton;
     private bool _collisionSet;
     public float force = 70f;
 
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log(collision.transform.childCount);
         if(collision.gameObject.tag == "Cube" && !_collisionSet)
         {
             for (int i = collision.transform.childCount - 1; i >= 0; i--)
@@ -20,6 +19,8 @@ public class ExplodeCubes : MonoBehaviour
                 
 
             }
+            restartButton.SetActive(true);
+            //Camera.main.transform.position -= new Vector3(0, 0, 3f);
             Destroy(collision.gameObject);
             _collisionSet = true;
 
