@@ -9,9 +9,9 @@ public class GameController : MonoBehaviour
     private CubePos nowCube = new CubePos(0, 1, 0);
     public float cubeChangePlaceSpeed = 0.5f, camMoveSpeed = 2f;
     public Transform cubeToPlace;
-    private float camMoveToYPosition;
+    private float camMoveToYPosition, camMoveToZPosition = -10f;
 
-    public GameObject cubeToCreate, allCubes;
+    public GameObject cubeToCreate, allCubes, vfx;
     public GameObject[] canvasStartPage;
     private Rigidbody allCubesRb;
 
@@ -70,6 +70,12 @@ public class GameController : MonoBehaviour
             nowCube.setVector(cubeToPlace.position);
             allCubesPositions.Add(nowCube.getVector());
 
+            if (PlayerPrefs.GetString("music") != "No")
+                GetComponent<AudioSource>().Play();
+
+            GameObject newVfx = Instantiate(vfx, cubeToPlace.position, Quaternion.identity) as GameObject;
+            Destroy(newVfx, 2f);
+
             allCubesRb.isKinematic = true;
             allCubesRb.isKinematic = false;
 
@@ -86,8 +92,10 @@ public class GameController : MonoBehaviour
 
         mainCam.localPosition = Vector3.MoveTowards(mainCam.localPosition,
             new Vector3(mainCam.localPosition.x, camMoveToYPosition, mainCam.localPosition.z), camMoveSpeed * Time.deltaTime);
+        mainCam.localPosition = Vector3.MoveTowards(mainCam.localPosition,
+            new Vector3(mainCam.localPosition.x, mainCam.localPosition.y, camMoveToZPosition), camMoveSpeed * Time.deltaTime);
 
-        if(Camera.main.backgroundColor != toCameraColor)
+        if (Camera.main.backgroundColor != toCameraColor)
             Camera.main.backgroundColor = Color.Lerp(Camera.main.backgroundColor, toCameraColor, Time.deltaTime / 1.5f); 
 
     }
@@ -164,7 +172,7 @@ public class GameController : MonoBehaviour
         maxHor = maxX > maxZ ? maxX : maxZ;
         if (maxHor % 3 == 0 && prevCountMaxHorizontal != maxHor)
         {
-            mainCam.localPosition -= new Vector3(0, 0, 2.5f);
+            camMoveToZPosition -= 2.5f;
             prevCountMaxHorizontal = maxHor;
         }
 

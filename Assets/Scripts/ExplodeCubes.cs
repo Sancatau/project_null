@@ -2,7 +2,7 @@
 
 public class ExplodeCubes : MonoBehaviour
 {
-    public GameObject restartButton;
+    public GameObject restartButton, explosion;
     private bool _collisionSet;
     public float force = 70f;
 
@@ -21,6 +21,14 @@ public class ExplodeCubes : MonoBehaviour
             }
             restartButton.SetActive(true);
             Camera.main.transform.localPosition -= new Vector3(0, 0, 3f);
+            Camera.main.gameObject.AddComponent<CameraShake>();
+
+            GameObject newVfx = Instantiate(explosion, new Vector3(collision.contacts[0].point.x, collision.contacts[0].point.y, collision.contacts[0].point.z), Quaternion.identity) as GameObject;
+            Destroy(newVfx, 3f);
+
+            if (PlayerPrefs.GetString("music") != "No")
+                GetComponent<AudioSource>().Play();
+
             Destroy(collision.gameObject);
             _collisionSet = true;
 
